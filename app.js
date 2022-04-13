@@ -6,10 +6,13 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const log4js = require('./utils/log4j')
-const index = require('./routes/index')
 const users = require('./routes/users')
-    // error handler
+const router = require('koa-router')()
+
+// error handler
 onerror(app)
+
+require('./config/db')
 
 // middlewares
 app.use(bodyparser({
@@ -24,22 +27,22 @@ app.use(views(__dirname + '/views', {
 }))
 
 
-// app.use(() => {
-//     ctx.body = 'hello'
-// })
-
 // logger
 app.use(async(ctx, next) => {
+    log4js.info(`get params:${JSON.stringfy(ctx.request.query)}`)
+    log4js.info(`post params:${JSON.stringfy(ctx.reques.body)}`)
     await next()
-    log4js.info(`log output`)
-        // log4js.info(`${ctx.request.query}`)
 })
 
-// routes
-app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
+router.prefix("/api")
 
-// error-handling
+router.use(users.routes(), users.allowedMethods())
+app.use(router.routes(), router.allowedMethods())
+    // routes
+    // app.use(index.routes(), index.allowedMethods())
+    // app.use(users.routes(), users.allowedMethods())
+    // error-handling
+
 app.on('error', (err, ctx) => {
     log4js.error(`${err.stack}`)
 });
