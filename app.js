@@ -26,23 +26,20 @@ app.use(views(__dirname + '/views', {
     extension: 'pug'
 }))
 
-
 // logger
 app.use(async(ctx, next) => {
-    log4js.info(`get params:${JSON.stringfy(ctx.request.query)}`)
-    log4js.info(`post params:${JSON.stringfy(ctx.reques.body)}`)
-    await next()
-})
-
+        log4js.info(`get params:${JSON.stringify(ctx.request.query)}`)
+        log4js.info(`post params:${JSON.stringify(ctx.request.body)}`)
+        await next()
+    })
+    //接口访问的根路径，即xxxx：端口号/api/
 router.prefix("/api")
 
 router.use(users.routes(), users.allowedMethods())
-app.use(router.routes(), router.allowedMethods())
-    // routes
-    // app.use(index.routes(), index.allowedMethods())
-    // app.use(users.routes(), users.allowedMethods())
-    // error-handling
 
+app.use(router.routes(), router.allowedMethods())
+
+// error-handling
 app.on('error', (err, ctx) => {
     log4js.error(`${err.stack}`)
 });

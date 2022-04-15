@@ -4,9 +4,10 @@
 const router = require('koa-router')()
 const User = require('./../models/userSchema')
 const util = require('./../utils/util')
-
+    //用户模块根路径/users/
 router.prefix('/users')
 
+//路径/users/login
 router.post('/login', async(ctx) => {
     try {
         const { userName, userPwd } = ctx.request.body;
@@ -17,11 +18,10 @@ router.post('/login', async(ctx) => {
         if (res) {
             ctx.body = util.success(res)
         } else {
-            ctx.body = util.fail('账号或密码不正确')
+            ctx.body = util.fail("账号或密码不正确")
         }
     } catch (error) {
         ctx.body = util.fail(error.msg)
     }
 })
-
 module.exports = router
