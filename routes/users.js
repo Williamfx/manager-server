@@ -13,15 +13,23 @@ router.prefix('/users')
 router.post('/login', async(ctx) => {
     try {
         const { userName, userPwd } = ctx.request.body;
+        /**
+         * 返回数据库指定字段，有三种方式
+         * 1、'userId userName userEmail state role deptId roleList'
+         * 2、{userId: 1,_id: 0}  1代表返回，0代表不返回
+         * 3、.select('userId')
+         */
         const res = await User.findOne({
-            userName,
-            userPwd
-        })
+                userName,
+                userPwd
+            }, 'userId userName userEmail state role deptId roleList') //返回指定的数据字段，有上面的三种方式
         const data = res._doc;
+
+        console.log('data=>', data)
+
         const token = jwt.sign({
             data: data,
-        }, 'imooc', { expiresIn: 30 })
-        console.log('token=>', token)
+        }, 'imooc', { expiresIn: '1h' })
 
         if (res) {
             data.token = token;
