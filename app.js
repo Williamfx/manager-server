@@ -7,7 +7,9 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const log4js = require('./utils/log4j')
 const users = require('./routes/users')
+    // const jwt = require('koa-jwt')
 const router = require('koa-router')()
+const jwt = require('jsonwebtoken')
 
 // error handler
 onerror(app)
@@ -37,7 +39,9 @@ app.use(async(ctx, next) => {
 router.prefix("/api")
 
 router.get('/leave/count', (ctx) => {
-    ctx.body = 'hello'
+    const token = ctx.request.headers.authorization.split(' ')[1]
+    const payload = jwt.verify(token, 'imooc')
+    ctx.body = payload
 })
 
 router.use(users.routes(), users.allowedMethods())
