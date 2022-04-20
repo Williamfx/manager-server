@@ -28,12 +28,17 @@ app.use(views(__dirname + '/views', {
 
 // logger
 app.use(async(ctx, next) => {
-        log4js.info(`get params:${JSON.stringify(ctx.request.query)}`)
-        log4js.info(`post params:${JSON.stringify(ctx.request.body)}`)
-        await next()
-    })
-    //接口访问的根路径，即xxxx：端口号/api/
+    log4js.info(`get params:${JSON.stringify(ctx.request.query)}`)
+    log4js.info(`post params:${JSON.stringify(ctx.request.body)}`)
+    await next()
+})
+
+//接口访问的根路径，即xxxx：端口号/api/
 router.prefix("/api")
+
+router.get('/leave/count', (ctx) => {
+    ctx.body = 'hello'
+})
 
 router.use(users.routes(), users.allowedMethods())
 
