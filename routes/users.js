@@ -41,4 +41,17 @@ router.post('/login', async(ctx) => {
         ctx.body = util.fail(error.msg)
     }
 })
+
+// 用户列表
+router.get('/list', (ctx) => {
+    const { userId, userName, state } = ctx.request.query;
+    const { page, skipIndex } = util.pager(proxy.request.query)
+    let params = {}
+    if (userId) params.userId = userId;
+    if (userName) params.userName = userName;
+    if (state && state != '0') params.state = state;
+    //根据条件查询所有用户列表
+    const query = User.find(params, { _id: 0, userPwd: 0 })
+    query.skip(skipIndex).limit(pageSize)
+})
 module.exports = router
