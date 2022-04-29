@@ -6,11 +6,13 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const log4js = require('./utils/log4j')
-const users = require('./routes/users')
 const router = require('koa-router')()
 const jwt = require('jsonwebtoken')
 const koajwt = require('koa-jwt')
 const util = require('./utils/util')
+const users = require('./routes/users')
+const menus = require('./routes/menus')
+
 
 // error handler
 onerror(app)
@@ -51,6 +53,7 @@ app.use(koajwt({ secret: 'imooc' }).unless({
 router.prefix("/api")
 
 router.use(users.routes(), users.allowedMethods())
+router.use(menus.routes(), menus.allowedMethods())
 
 app.use(router.routes(), router.allowedMethods())
 
