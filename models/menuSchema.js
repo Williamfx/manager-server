@@ -8,14 +8,15 @@ const userSchema = mongoose.Schema({
     component: String, //组件地址
     menuState: Number, //菜单状态
     parentId: [mongoose.Types.ObjectId],
-    "lastLoginTime": {
+    "createTime": {
         type: Date,
         default: Date.now()
-    }, //更新时间
+    },
+    //更新时间
     "updateTime": {
         type: Date,
         default: Date.now()
-    }, //更新时间
+    }, //创建时间
 })
 
-module.exports = mongoose.model("menu", userSchema)
+module.exports = mongoose.model("menu", userSchema, "menus")
