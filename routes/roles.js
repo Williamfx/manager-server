@@ -4,35 +4,36 @@ const Role = require('../models/roleSchema')
 
 router.prefix('/roles')
 
-// 角色列表查询
-router.get('/list', async(ctx) => {
-    const { roleName } = ctx.request.query;
-    const params = {}
-    if (roleName) params.roleName = roleName;
-    let rootList = await Role.find(params) || []
+// 查询所有角色列表查询
+router.get('/alllist', async(ctx) => {
+    try {
+        const list = await Role.find({}, "_id roleName")
+        ctx.body = util.success(list);
+    } catch (error) {
+        ctx.body = util.fail(`查询失败:${error.stack}`);
+    }
+
 })
 
-
-//菜单编辑、删除、新增功能
-router.post('/operate', async(ctx) => {
-    const { _id, action, ...params } = ctx.request.body;
-    let res, info;
+//按页获取角色列表
+router.get('/list', async(ctx) => {
+    const { roleName } = ctx.request.query;
+    const { page, skipIndex } = util.pager(ctx.request.query)
     try {
-        if (action == 'create') {
-            res = await Role.create(params)
-            info = '创建成功'
-        } else if (action == 'edit') {
-            params.updateTime = new Date();
-            res = await Role.findByIdAndUpdate(_id, params);
-            info = '编辑成功'
-        } else {
-            res = await Role.findByIdAndRemove(_id)
-            await Role.deleteMany({ parentId: { $all: [_id] } })
-            info = '删除成功'
-        }
-        ctx.body = util.success('', info);
+        let params = {}
+        if (roleName) params.roleName = roleName;
+        const query = Role.find(params)
+        const list = await query.skip(skipIndex).limit(page.pageSize)
+        const total = await Role.countDocuments(params);
+        ctx.body = util.success({
+            list,
+            page: {
+                ...page,
+                total
+            }
+        })
     } catch (error) {
-        ctx.body = util.fail('', error.stack);
+        ctx.body = util.fail(`查询失败：${error.stack}`)
     }
 })
 
